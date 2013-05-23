@@ -1,8 +1,16 @@
 <?php
+/*
+Plugin name: DP Options Page
+Plugin URI: http://dreamproduction.com/wordpress/dp-options-page
+Description: Small framework for option pages.
+Version: 0.2
+Author: Dan Stefancu
+Author URI: http://stefancu.ro/
+*/
+
 
 /**
  * Small framework for adding options pages
- *
  */
 class DP_Options_Page {
 	var $title = 'DP Options';
@@ -14,7 +22,12 @@ class DP_Options_Page {
 
 	var $fields = array();
 
+	var $extra_sections = array();
+
 	public function init() {
+		if ($this->extra_sections)
+			add_action( 'admin_init', array($this, 'extra_sections_init') );
+
 		add_action( 'admin_init', array($this, 'options_init') );
 		add_action( 'admin_menu', array($this, 'add_page') );
 	}
@@ -64,17 +77,59 @@ class DP_Options_Page {
 		);
 
 		foreach ($this->fields as $field) {
-			if ($field)
+			if ($field) {
+				$section = isset($field['section']) && $this->section_exists($field['section']) ? $field['section'] : 'general';
 				add_settings_field(
 					$field['name'],						// field id (internal)
-					$field['label'],				// field label
+					$field['label'],					// field label
 					array($this, 'display_field'),		// callback function
 					$this->page_slug,					// page to add to
-					'general',							// section to add to
+					$section,							// section to add to
 					$field 								// extra args
 				);
+			}
+		}
+	}
+
+	/**
+	 * Add extra section for this option page.
+	 *
+	 * @param array $args - 'name', 'title' strings
+	 */
+	function add_extra_section( $args ) {
+		$this->extra_sections[] = array( 'name' => $args['name'], 'title' => $args['title'] );
+
+	}
+
+	/**
+	 * Register extra sections on this option page.
+	 */
+	function extra_sections_init() {
+		foreach ($this->extra_sections as $section) {
+			add_settings_section(
+				$section['name'],		// id
+				$section['title'],		// title
+				'__return_false',		// callback
+				$this->page_slug		// page slug
+			);
+		}
+	}
+
+	/**
+	 * Check if the section exists on current options page.
+	 * @param $section
+	 *
+	 * @return bool
+	 */
+	function section_exists($section) {
+		global $wp_settings_sections;
+
+		foreach ($wp_settings_sections[$this->page_slug] as $section_name => $args ) {
+			if ($section === $section_name)
+				return true;
 		}
 
+		return false;
 	}
 
 	/**
