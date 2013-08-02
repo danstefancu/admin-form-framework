@@ -173,7 +173,7 @@ class DP_Options_Page {
 
 	function display_text($field_name, $field_value, $extra = array()) {
 		?>
-		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="1" <?php echo esc_attr( $field_value ); ?> />
+		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>" />
 	<?php
 	}
 
