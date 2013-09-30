@@ -19,6 +19,8 @@ class DP_Options_Page {
 	var $capability = 'manage_options';
 	var $options_name = 'dp_options';
 	var $section_title = '';
+	var $parent_slug = 'options-general.php';
+	private $hook_suffix;
 
 	var $fields = array();
 
@@ -30,6 +32,7 @@ class DP_Options_Page {
 
 		add_action( 'admin_init', array($this, 'options_init') );
 		add_action( 'admin_menu', array($this, 'add_page') );
+		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts' ) );
 	}
 
 	/**
@@ -49,13 +52,33 @@ class DP_Options_Page {
 	 * Register options page. Only for main site
 	 */
 	function add_page() {
-		add_options_page(
+		$this->hook_suffix = add_submenu_page(
+			$this->parent_slug,
 			$this->title,				// page title. for title bar
 			$this->menu_title,			// menu title. for menu label
 			$this->capability,			// capability
 			$this->page_slug,			// slug. needed for sections, unique identifier - options.php?page=$page_slug
 			array($this, 'render_page') 				// page callback. renders the page itself
 		);
+	}
+
+	function url( $file ) {
+		$dir_path = dirname(__FILE__);
+		if( !file_exists( trailingslashit( $dir_path) . $file ) )
+			return false;
+
+		$home_path = get_home_path();
+		$path_from_root = str_replace($home_path, '', $dir_path );
+		return home_url( trailingslashit( $path_from_root ) . $file );
+	}
+
+	function admin_scripts( $hookname ) {
+		if( $this->hook_suffix == $hookname )
+			wp_enqueue_script(
+				'dp-options',      // name/id
+				$this->url('dp-options.js'), // file
+				array( 'jquery' )             // dependencies
+			);
 	}
 
 	/**
@@ -147,8 +170,9 @@ class DP_Options_Page {
 
 		$field_name = "{$this->options_name}[{$current_option_name}]";
 		$field_value = isset($options[$current_option_name]) ? $options[$current_option_name] : '';
+		$extra = $field;
 
-		$this->$field_callback($field_name, $field_value);
+		$this->$field_callback($field_name, $field_value, $extra);
 		$this->display_description($field['description']);
 	}
 
@@ -174,6 +198,67 @@ class DP_Options_Page {
 	function display_text($field_name, $field_value, $extra = array()) {
 		?>
 		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>" />
+	<?php
+	}
+
+	function display_select($field_name, $field_value, $extra = array()) {
+		?>
+		<select name="<?php echo $field_name; ?>">
+			<?php foreach($extra['select_options'] as $key => $val): ?>
+				<option value="<?php echo $key; ?>" <?php selected($field_value, $key); ?>><?php echo $val; ?></option>
+			<?php endforeach; ?>
+		</select>
+	<?php
+	}
+
+	function display_image( $field_name, $field_value, $extra = array() ) {
+		$button_name = $field_name . '_button';
+		$type = 'image';
+		$class = isset( $extra['class'] ) ? $extra['class'] : 'options-page-image';
+		if ($field_value) {
+			$attachment = get_post( $field_value );
+			$filename = basename( $attachment->guid );
+			$icon_src = wp_get_attachment_image_src( $attachment->ID, 'medium' );
+			$icon_src = array_values( $icon_src );
+			$icon_src = array_shift( $icon_src );
+			$uploader_div = 'hidden';
+			$display_div = '';
+		} else {
+			$uploader_div = '';
+			$display_div = 'hidden';
+			$filename = '';
+			$icon_src = wp_mime_type_icon( $type );
+		}
+
+		?>
+
+		<div class="<?php echo $class; ?> dp-field" data-type="<?php echo $type; ?>">
+			<input type="hidden" class="file-value" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" value="<?php echo esc_attr($field_value); ?>" />
+
+			<div class="file-missing <?php echo $uploader_div; ?>">
+				<span><?php _e('No file selected.', 'dp'); ?></span>
+				<button class="button file-add" name="<?php echo $button_name; ?>" id="<?php echo $button_name; ?>"><?php _e('Add file', 'dp') ?></button>
+			</div>
+			<div class="file-exists clearfix <?php echo $display_div; ?>">
+				<img class="file-icon" src="<?php echo $icon_src; ?>" />
+				<br/>
+				<span class="file-name hidden"><?php echo $filename; ?></span>
+				<a class="file-remove button" href="#"><?php _e('Remove', 'dp'); ?></a>
+			</div>
+		</div>
+	<?php
+	}
+
+	function display_custom_icons( $field_name, $field_value, $extra = array() ) {
+		$count = isset( $field_value['count'] ) && intval( $field_value['count']) >= 1 ? $field_value['count'] : 1;
+		?>
+		<input type="hidden" value="<?php echo $count; ?>" class="custom-icons-count" name="<?php echo $field_name; ?>[count]" />
+		<?php
+		for( $i=1; $i<=$count;$i++) {
+			$value = isset( $field_value['image-' . $i] ) ? $field_value['image-' . $i] : '';
+			$this->display_image( $field_name . "[image-$i]", $value, array('class'=> 'custom-icon' ) );
+		} ?>
+		<a class="button add-custom-icon" href="#" ><?php _e( 'Add one more custom icon', 'dp' ); ?></a>
 	<?php
 	}
 
