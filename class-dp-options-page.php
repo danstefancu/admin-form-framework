@@ -324,6 +324,7 @@ class DP_Options_Page {
 		if ( is_wp_error( $tmp ) ) {
 			@unlink($file_array['tmp_name']);
 			$file_array['tmp_name'] = '';
+			return false;
 		}
 
 		// do the validation and storage stuff
@@ -363,7 +364,8 @@ class DP_Options_Page {
 		$id = wp_insert_attachment($attachment, $file );
 		if ( !is_wp_error($id) )
 			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
-
+		else
+			return false;
 		return $id;
 	}
 
