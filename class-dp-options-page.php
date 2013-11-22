@@ -20,6 +20,8 @@ class DP_Options_Page {
 	var $options_name = 'dp_options';
 	var $section_title = '';
 	var $parent_slug = 'options-general.php';
+	var $menu_hook = 'admin_menu';
+
 	private $hook_suffix;
 
 	var $fields = array();
@@ -31,7 +33,7 @@ class DP_Options_Page {
 			add_action( 'admin_init', array($this, 'extra_sections_init') );
 
 		add_action( 'admin_init', array($this, 'options_init') );
-		add_action( 'admin_menu', array($this, 'add_page') );
+		add_action( $this->menu_hook , array($this, 'add_page') );
 		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts' ) );
 	}
 
