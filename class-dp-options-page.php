@@ -315,7 +315,7 @@ class DP_Options_Page {
 	private function image_from_url( $url ) {
 
 		if( ! $url )
-			return;
+			return false;
 
 		$tmp = download_url( $url );
 

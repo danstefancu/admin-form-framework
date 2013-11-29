@@ -43,9 +43,9 @@
 		var icon;
 		if ( attachment.sizes ) {
 			if( attachment.sizes.medium )
-				icon = attachment.sizes.medium.url
+				icon = attachment.sizes.medium.url;
 			else
-				icon = attachment.sizes.full.url
+				icon = attachment.sizes.full.url;
 		} else {
 			icon = attachment.icon;
 		}
@@ -163,7 +163,7 @@
 	}
 
 	$(document).ready(function(){
-		var images = new Array();
+		var images = [];
 
 		$('.options-page-image').each( function (e) {
 			images[e] = new DT_media( $(this), 'Choose an image' );
@@ -180,7 +180,7 @@
 			new_icon.find('.file-missing').removeClass('hidden');
 
 			$('.custom-icons-count',context).val( $('.custom-icon', context).length + 1 );
-		}
+		};
 
 		var icon_remove = function ( icon, context ) {
 			var index = icon.index()-1;
@@ -195,7 +195,7 @@
 
 			$('.custom-icons-count',context).val( total );
 
-		}
+		};
 
 		$('.custom-icons-count').each( function() {
 			var context = $(this).parent();
