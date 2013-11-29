@@ -3,7 +3,7 @@
 Plugin name: DP Options Page
 Plugin URI: http://dreamproduction.com/wordpress/dp-options-page
 Description: Small framework for option pages.
-Version: 0.2
+Version: 0.3
 Author: Dan Stefancu
 Author URI: http://stefancu.ro/
 */
@@ -25,10 +25,13 @@ class DP_Options_Page {
 	private $hook_suffix;
 
 	var $fields = array();
-
 	var $extra_sections = array();
+	var $saved_options;
 
 	public function init() {
+
+		$this->saved_options = get_option( $this->options_name );
+
 		if ($this->extra_sections)
 			add_action( 'admin_init', array($this, 'extra_sections_init') );
 
@@ -66,21 +69,30 @@ class DP_Options_Page {
 
 	function url( $file ) {
 		$dir_path = dirname(__FILE__);
+
 		if( !file_exists( trailingslashit( $dir_path) . $file ) )
 			return false;
 
-		$home_path = get_home_path();
+		$home_path = untrailingslashit( get_home_path() );
+
 		$path_from_root = str_replace($home_path, '', $dir_path );
+		$path_from_root = str_replace( '\\', '/', $path_from_root);
+
 		return home_url( trailingslashit( $path_from_root ) . $file );
 	}
 
 	function admin_scripts( $hookname ) {
-		if( $this->hook_suffix == $hookname )
+		if( $this->hook_suffix == $hookname ) {
+			wp_enqueue_script( 'jquery' );
+
+			wp_enqueue_media();
+
 			wp_enqueue_script(
 				'dp-options',      // name/id
 				$this->url('dp-options.js'), // file
 				array( 'jquery' )             // dependencies
 			);
+		}
 	}
 
 	/**
@@ -89,7 +101,7 @@ class DP_Options_Page {
 	function options_init() {
 
 		register_setting(
-			$this->options_name,	// option group. used in options_page() -> settings_fields()
+			$this->options_name,	// option group. used in render_page() -> settings_fields()
 			$this->options_name		// option name. database option name
 
 		);
@@ -164,14 +176,12 @@ class DP_Options_Page {
 	 * @see inl_course_options_init(options_init
 	 */
 	function display_field( $field ) {
-
-		$options = get_option($this->options_name);
 		$current_option_name = isset($field['name']) ? $field['name'] : '';
 
 		$field_callback = isset($field['type']) ? 'display_' . $field['type'] : 'display_text';
 
 		$field_name = "{$this->options_name}[{$current_option_name}]";
-		$field_value = isset($options[$current_option_name]) ? $options[$current_option_name] : '';
+		$field_value = isset($this->saved_options[$current_option_name]) ? $this->saved_options[$current_option_name] : '';
 		$extra = $field;
 
 		$this->$field_callback($field_name, $field_value, $extra);
@@ -261,7 +271,7 @@ class DP_Options_Page {
 
 			<h2><?php echo $this->title; ?></h2>
 
-			<form method="post" action="<?php echo admin_url('options.php'); ?>">
+			<form method="post" action="<?php echo admin_url( 'options.php' ); ?>">
 				<?php
 				settings_fields( $this->options_name );
 				do_settings_sections( $this->page_slug );
