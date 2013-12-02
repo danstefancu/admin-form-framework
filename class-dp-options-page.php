@@ -21,6 +21,7 @@ class DP_Options_Page {
 	var $section_title = '';
 	var $parent_slug = 'options-general.php';
 	var $menu_hook = 'admin_menu';
+	var $button_text = null;
 
 	private $hook_suffix;
 
@@ -35,8 +36,8 @@ class DP_Options_Page {
 		if ($this->extra_sections)
 			add_action( 'admin_init', array($this, 'extra_sections_init') );
 
-		add_action( 'admin_init', array($this, 'options_init') );
-		add_action( $this->menu_hook , array($this, 'add_page') );
+		add_action( $this->menu_hook , array($this, 'add_page'), 11 );
+		add_action( 'admin_init', array($this, 'options_init'), 11 );
 		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts' ) );
 	}
 
@@ -185,7 +186,9 @@ class DP_Options_Page {
 		$extra = $field;
 
 		$this->$field_callback($field_name, $field_value, $extra);
-		$this->display_description($field['description']);
+		if ( isset( $field['description'] ) ) {
+			$this->display_description($field['description']);
+		}
 	}
 
 	function display_description($text = '') {
@@ -287,7 +290,7 @@ class DP_Options_Page {
 				<?php
 				settings_fields( $this->options_name );
 				do_settings_sections( $this->page_slug );
-				submit_button();
+				submit_button( $this->button_text );
 				?>
 			</form>
 		</div><!-- .wrap -->
