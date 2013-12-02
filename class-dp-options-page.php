@@ -223,6 +223,18 @@ class DP_Options_Page {
 	<?php
 	}
 
+	function display_radio($field_name, $field_value, $extra = array() ) {
+		if( !isset( $extra['radio_options'] ) )
+			return;
+
+		foreach( $extra['radio_options'] as $key => $val ): ?>
+			<label><input type="radio" name="<?php  echo $field_name; ?>" value="<?php echo $key;?>" <?php checked( $field_value, $key );?>/>
+				<?php echo $val; ?>
+			</label></br>
+		<?php
+		endforeach;
+	}
+
 	function display_image( $field_name, $field_value, $extra = array() ) {
 		$button_name = $field_name . '_button';
 		$type = 'image';
