@@ -132,10 +132,13 @@ class DP_Options_Page {
 	/**
 	 * Add extra section for this option page.
 	 *
-	 * @param array $args - 'name', 'title' strings
+	 * @param array $options
+	 * @var string $options['name']
+	 * @var string $options['title']
+	 * @var string $options['callback']
 	 */
-	function add_extra_section( $args ) {
-		$this->extra_sections[] = array( 'name' => $args['name'], 'title' => $args['title'] );
+	function add_extra_section( $options ) {
+		$this->extra_sections[] = $options;
 
 	}
 
@@ -144,10 +147,12 @@ class DP_Options_Page {
 	 */
 	function extra_sections_init() {
 		foreach ($this->extra_sections as $section) {
+			$section['callback'] = (isset( $section['callback'] ) && !empty( $section['callback'] )) ? $section['callback'] : '__return_false';
+
 			add_settings_section(
 				$section['name'],		// id
 				$section['title'],		// title
-				'__return_false',		// callback
+				$section['callback'],	// callback
 				$this->page_slug		// page slug
 			);
 		}
@@ -290,7 +295,7 @@ class DP_Options_Page {
 				<?php
 				settings_fields( $this->options_name );
 				do_settings_sections( $this->page_slug );
-				submit_button( $this->button_text );
+				if ( $this->button_text !== false ) submit_button( $this->button_text );
 				?>
 			</form>
 		</div><!-- .wrap -->
