@@ -216,8 +216,8 @@ class DP_Options_Page {
 	function display_select($field_name, $field_value, $extra = array()) {
 		?>
 		<select name="<?php echo $field_name; ?>">
-			<?php foreach($extra['select_options'] as $key => $val): ?>
-				<option value="<?php echo $key; ?>" <?php selected($field_value, $key); ?>><?php echo $val; ?></option>
+			<?php foreach($extra['select_options'] as $value => $title): ?>
+				<option value="<?php echo $value; ?>" <?php selected($field_value, $value); ?>><?php echo $title; ?></option>
 			<?php endforeach; ?>
 		</select>
 	<?php
@@ -227,9 +227,9 @@ class DP_Options_Page {
 		if( !isset( $extra['radio_options'] ) )
 			return;
 
-		foreach( $extra['radio_options'] as $key => $val ): ?>
-			<label><input type="radio" name="<?php  echo $field_name; ?>" value="<?php echo $key;?>" <?php checked( $field_value, $key );?>/>
-				<?php echo $val; ?>
+		foreach( $extra['radio_options'] as $value => $title ): ?>
+			<label><input type="radio" name="<?php  echo $field_name; ?>" value="<?php echo $value;?>" <?php checked( $field_value, $value );?>/>
+				<?php echo $title; ?>
 			</label></br>
 		<?php
 		endforeach;
