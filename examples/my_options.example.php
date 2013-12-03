@@ -46,14 +46,14 @@ function my_options_create_page() {
 	// Select field
 	$options_page->add_field(
 		array(
-			 'name'           => 'color_palette',
-			 'label'          => __( 'Color palette', 'my_options' ),
-			 'type'           => 'select',
-			 'description'    => '', // optional
-			 'select_options' => array(
-				 '#AA0000' => 'Red',
-				 '#00AA00' => 'Green',
-				 '#0000AA' => 'Blue',
+			'name'           => 'color_palette',
+			'label'          => __( 'Color palette', 'my_options' ),
+			'type'           => 'select',
+			'description'    => '', // optional
+			'select_options' => array(
+				'#AA0000'    => 'Red',
+				'#00AA00'    => 'Green',
+				'#0000AA'    => 'Blue',
 			 )
 		)
 	);
@@ -61,10 +61,10 @@ function my_options_create_page() {
 	// Checkbox field
 	$options_page->add_field(
 		array(
-			 'name'        => 'sticky_header',
-			 'label'       => __( 'Sticky header', 'my_options' ),
-			 'type'        => 'checkbox',
-			 'description' => 'Checking this will make the header sticky on desktop devices. Mobile devices have a sticky header by default.',
+			'name'        => 'sticky_header',
+			'label'       => __( 'Sticky header', 'my_options' ),
+			'type'        => 'checkbox',
+			'description' => 'Checking this will make the header sticky on desktop devices. Mobile devices have a sticky header by default.',
 		)
 	);
 
@@ -72,8 +72,8 @@ function my_options_create_page() {
 	// If you need more sections besides the defaul "general", add them like this
 	$options_page->add_extra_section(
 		array(
-			 'name'  => 'footer',
-			 'title' => __( 'Footer', 'my_options' )
+			'name'  => 'footer',
+			'title' => __( 'Footer', 'my_options' )
 		)
 	);
 
@@ -101,10 +101,10 @@ function my_options_create_page() {
 	// Text field
 	$options_page->add_field(
 		array(
-			 'name'    => 'copyright_text',
-			 'label'   => __( 'Copyright text', 'my_options' ),
-			 'type'    => 'text',
-			 'section' => 'footer'
+			'name'    => 'copyright_text',
+			'label'   => __( 'Copyright text', 'my_options' ),
+			'type'    => 'text',
+			'section' => 'footer'
 		)
 	);
 
