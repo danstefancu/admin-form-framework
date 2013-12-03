@@ -179,6 +179,8 @@ class DP_Options_Page {
 	 * Callback for register_settings_field().
 	 *
 	 * @param array $field options passed by register_settings_field()
+	 *
+	 * Todo: See what?
 	 * @see inl_course_options_init(options_init
 	 */
 	function display_field( $field ) {

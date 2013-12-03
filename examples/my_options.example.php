@@ -4,6 +4,8 @@
  *
  * This simple plugin is a demonstration of all the available settings options available to DP_Options_Page.
  * You can use it to learn using the plugin, or simply start modifying it to fit your needs.
+ *
+ * Note: Make sure you move it one level up. Wordpress does not discover nested modules.
 */
 
 // Action for creating an options page
@@ -22,26 +24,50 @@ add_action( 'init', 'my_options_create_page', 11 );
  * @return void
  */
 function my_options_create_page() {
-	$options_page = new DP_Options_Page();
+
+	if (class_exists('DP_Options_Page')) {
+		$options_page = new DP_Options_Page();
+	} else {
+		return;
+	}
+
 
 	// Page title
 	$options_page->title = __( 'My Theme Options', 'my_options' );
 
-	// Link label in the menu
+	// Link label in the sidebar menu
 	$options_page->menu_title = __( 'My Options', 'my_options' );
 
-	// Slug of the page parent. This configures which menu this page will be under.
-	// Defaults to options-general.php (Settings)
-	$options_page->parent_slug = 'themes.php';
-
 	// Page slug. wp-admin/parent.php?page=slug
-	// Defaults to 'option_page'
+	// Default: 'option_page'
 	$options_page->page_slug = 'theme_options';
+
+	// Permissions required to access the page. See add_submenu_page()
+	// Default: 'manage_options'
+	$options_page->capability = 'edit_theme_options';
 
 	// The name of the option which will contain all settings in the page
 	$options_page->options_name = 'my_theme_options';
 
+	// By default you get a 'general' section that includes all you fields with no specific section
+	// You can set it's title like this
+	// Default: ''
+	$options_page->section_title = '';
 
+	// Slug of the page parent. This configures which menu this page will be under.
+	// Default: options-general.php (Settings)
+	$options_page->parent_slug = 'themes.php';
+
+	// TODO: Why would I change this?
+	$options_page->menu_hook = 'admin_menu';
+
+	// If you need more sections besides the defaul "general", add them like this
+	$options_page->add_extra_section(
+		array(
+			'name'  => 'header',
+			'title' => __( 'Header', 'my_options' )
+		)
+	);
 
 	// Select field
 	$options_page->add_field(
@@ -54,7 +80,24 @@ function my_options_create_page() {
 				'#AA0000'    => 'Red',
 				'#00AA00'    => 'Green',
 				'#0000AA'    => 'Blue',
-			 )
+			),
+			'section' => 'header',
+		)
+	);
+
+	// Radio field
+	$options_page->add_field(
+		array(
+			'name'           => 'color2_palette',
+			'label'          => __( 'Secondary color palette', 'my_options' ),
+			'type'           => 'radio',
+			'description'    => '', // optional
+			'radio_options' => array(
+				'#AA0000'    => 'Red',
+				'#00AA00'    => 'Green',
+				'#0000AA'    => 'Blue',
+			),
+			'section' => 'header',
 		)
 	);
 
@@ -65,11 +108,11 @@ function my_options_create_page() {
 			'label'       => __( 'Sticky header', 'my_options' ),
 			'type'        => 'checkbox',
 			'description' => 'Checking this will make the header sticky on desktop devices. Mobile devices have a sticky header by default.',
+			'section'     => 'header',
 		)
 	);
 
 
-	// If you need more sections besides the defaul "general", add them like this
 	$options_page->add_extra_section(
 		array(
 			'name'  => 'footer',
