@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin name: DP Options Page
-Plugin URI: http://dreamproduction.com/wordpress/dp-options-page
-Description: Small framework for option pages.
+Plugin name: Admin Form Framework
+Plugin URI: http://dreamproduction.com/wordpress/aff
+Description: Small framework for building Dashboard form pages.
 Version: 0.3
 Author: Dan Stefancu
 Author URI: http://stefancu.ro/
@@ -12,12 +12,12 @@ Author URI: http://stefancu.ro/
 /**
  * Small framework for adding options pages
  */
-class DP_Options_Page {
-	var $title = 'DP Options';
-	var $menu_title = 'DP Options';
-	var $page_slug = 'dp_options';
+class AFF {
+	var $title = 'AFF Options';
+	var $menu_title = 'AFF Options';
+	var $page_slug = 'aff_options';
 	var $capability = 'manage_options';
-	var $options_name = 'dp_options';
+	var $options_name = 'aff_options';
 	var $section_title = '';
 	var $parent_slug = 'options-general.php';
 	var $menu_hook = 'admin_menu';

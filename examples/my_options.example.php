@@ -2,7 +2,7 @@
 /*
  * Plugin name: My Options
  *
- * This simple plugin is a demonstration of all the available settings options available to DP_Options_Page.
+ * This simple plugin is a demonstration of all the available settings options available to AFF.
  * You can use it to learn using the plugin, or simply start modifying it to fit your needs.
  *
  * Note: Make sure you move it one level up. Wordpress does not discover nested modules.
@@ -15,18 +15,18 @@ add_action( 'init', 'my_options_create_page', 11 );
  * Display the demonstrative My options_page.
  * This function is hooked to the init hook in setup()
  *
- * @uses  DP_Options_Page::add_extra_section() To add page sections.
- * @uses  DP_Options_Page::add_field() To add fields.
- * @uses  DP_Options_Page::init() To render the page.
+ * @uses  AFF::add_extra_section() To add page sections.
+ * @uses  AFF::add_field() To add fields.
+ * @uses  AFF::init() To render the page.
  *
- * @see DP_Options_Page to see how the page is registered and displayed.
+ * @see AFF to see how the page is registered and displayed.
  *
  * @return void
  */
 function my_options_create_page() {
 
-	if (class_exists('DP_Options_Page')) {
-		$options_page = new DP_Options_Page();
+	if (class_exists('AFF')) {
+		$options_page = new AFF();
 	} else {
 		return;
 	}
