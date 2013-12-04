@@ -348,6 +348,7 @@ class Aff {
 	 */
 	function url( $file ) {
 		$dir_path = dirname( __FILE__ );
+		$dir_path = str_replace( '\\', '/', $dir_path );
 
 		if ( !file_exists( trailingslashit( $dir_path ) . $file ) )
 			return false;
