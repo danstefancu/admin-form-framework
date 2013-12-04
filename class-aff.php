@@ -2,7 +2,7 @@
 /*
 Plugin name: Admin Form Framework
 Plugin URI: http://dreamproduction.com/wordpress/aff
-Description: Small framework for building Dashboard form pages.
+Description: Small framework for building Admin pages with forms.
 Version: 0.3
 Author: Dan Stefancu
 Author URI: http://stefancu.ro/
@@ -12,10 +12,10 @@ Author URI: http://stefancu.ro/
 /**
  * Small framework for adding options pages
  */
-class AFF {
-	var $title = 'AFF Options';
+class Aff {
+	var $title = 'Options Page';
 	var $menu_title = 'AFF Options';
-	var $page_slug = 'aff_options';
+	var $page_slug = 'options_page';
 	var $capability = 'manage_options';
 	var $options_name = 'aff_options';
 	var $section_title = '';
