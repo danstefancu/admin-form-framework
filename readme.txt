@@ -68,21 +68,7 @@ The Settings API can be difficult to use by the novice developer. Writing the se
 
 If you require a lot of custom markup or advanced validation, this plugin may get in your way. However, you can easily extend the settings class with new option types that satisfy your particular needs.
 
-== Screenshots ==
-
-// TODO: Not sure how to use this
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets 
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png` 
-(or jpg, jpeg, gif).
-2. This is the second screen shot
-
 == Changelog ==
 
 = 0.4 =
 * First public release.
-
-== Upgrade notice ==
-
-= 0.3 =
-This is the first public release. It has been carefully reviewed and includes a significant number of improvements.
