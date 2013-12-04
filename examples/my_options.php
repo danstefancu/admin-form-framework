@@ -5,7 +5,7 @@
  * This simple plugin is a demonstration of all the available settings options available to AFF.
  * You can use it to learn using the plugin, or simply start modifying it to fit your needs.
  *
- * Note: Make sure you move it one level up. Wordpress does not discover nested modules.
+ * Note: Make sure you move it one level up. WordPress does not discover nested modules.
 */
 
 // Action for creating an options page
@@ -25,26 +25,33 @@ add_action( 'init', 'my_options_create_page', 11 );
  */
 function my_options_create_page() {
 
-	if (class_exists('AFF')) {
-		$options_page = new AFF();
-	} else {
+	// Do nothing if plugin is not active
+	if ( ! class_exists( 'Aff' ) ) {
 		return;
 	}
 
+	$options_page = new Aff();
 
 	// Page title
-	$options_page->title = __( 'My Theme Options', 'my_options' );
+	$options_page->title = __( 'My Theme Options', 'textdomain' );
 
 	// Link label in the sidebar menu
-	$options_page->menu_title = __( 'My Options', 'my_options' );
+	$options_page->menu_title = __( 'My Options', 'textdomain' );
 
 	// Page slug. wp-admin/parent.php?page=slug
-	// Default: 'option_page'
+	// Default: 'options_page'
 	$options_page->page_slug = 'theme_options';
 
-	// Permissions required to access the page. See add_submenu_page()
+	// Permissions required to access/view the page.
 	// Default: 'manage_options'
 	$options_page->capability = 'edit_theme_options';
+
+	// Slug of the page parent. This configures which menu this page will be under.
+	// Default: options-general.php (Settings)
+	$options_page->parent_slug = 'themes.php';
+
+	// Can be changed to 'network_menu' - to add a page in the network admin menu
+	$options_page->menu_hook = 'admin_menu';
 
 	// The name of the option which will contain all settings in the page
 	$options_page->options_name = 'my_theme_options';
@@ -54,18 +61,11 @@ function my_options_create_page() {
 	// Default: ''
 	$options_page->section_title = '';
 
-	// Slug of the page parent. This configures which menu this page will be under.
-	// Default: options-general.php (Settings)
-	$options_page->parent_slug = 'themes.php';
-
-	// Can be changed to 'network_menu' - to add a page in the network admin menu
-	$options_page->menu_hook = 'admin_menu';
-
-	// If you need more sections besides the defaul "general", add them like this
+	// If you need more sections besides the default "general", add them like this
 	$options_page->add_section(
 		array(
 			'name'  => 'header',
-			'title' => __( 'Header', 'my_options' )
+			'title' => __( 'Header', 'textdomain' )
 		)
 	);
 
@@ -73,13 +73,13 @@ function my_options_create_page() {
 	$options_page->add_field(
 		array(
 			'name'           => 'color_palette',
-			'label'          => __( 'Color palette', 'my_options' ),
+			'label'          => __( 'Color palette', 'textdomain' ),
 			'type'           => 'select',
 			'description'    => '', // optional
-			'select_options' => array(
-				'#AA0000'    => 'Red',
-				'#00AA00'    => 'Green',
-				'#0000AA'    => 'Blue',
+			'options' => array(
+				'#AA0000'    => __( 'Red', 'textdomain' ),
+				'#00AA00'    => __( 'Green', 'textdomain' ),
+				'#0000AA'    => __( 'Blue', 'textdomain' ),
 			),
 			'section' => 'header',
 		)
@@ -89,13 +89,12 @@ function my_options_create_page() {
 	$options_page->add_field(
 		array(
 			'name'           => 'color2_palette',
-			'label'          => __( 'Secondary color palette', 'my_options' ),
+			'label'          => __( 'Secondary color palette', 'textdomain' ),
 			'type'           => 'radio',
-			'description'    => '', // optional
-			'radio_options' => array(
-				'#AA0000'    => 'Red',
-				'#00AA00'    => 'Green',
-				'#0000AA'    => 'Blue',
+			'options' => array(
+				'#AA0000'    => __( 'Red', 'textdomain' ),
+				'#00AA00'    => __( 'Green', 'textdomain' ),
+				'#0000AA'    => __( 'Blue', 'textdomain' ),
 			),
 			'section' => 'header',
 		)
@@ -105,9 +104,9 @@ function my_options_create_page() {
 	$options_page->add_field(
 		array(
 			'name'        => 'sticky_header',
-			'label'       => __( 'Sticky header', 'my_options' ),
+			'label'       => __( 'Sticky header', 'textdomain' ),
 			'type'        => 'checkbox',
-			'description' => 'Checking this will make the header sticky on desktop devices. Mobile devices have a sticky header by default.',
+			'description' => __( 'Checking this will make the header sticky on desktop devices. Mobile devices have a sticky header by default.', 'textdomain' ),
 			'section'     => 'header',
 		)
 	);
@@ -116,7 +115,7 @@ function my_options_create_page() {
 	$options_page->add_section(
 		array(
 			'name'  => 'footer',
-			'title' => __( 'Footer', 'my_options' )
+			'title' => __( 'Footer', 'textdomain' )
 		)
 	);
 
@@ -124,10 +123,9 @@ function my_options_create_page() {
 	$options_page->add_field(
 		array(
 			 'name'    => 'logo',
-			 'label'   => __( 'Logo', 'my_options' ),
+			 'label'   => __( 'Logo', 'textdomain' ),
 			 'type'    => 'image',
 			 'section' => 'footer'
-
 		)
 	);
 
@@ -135,7 +133,7 @@ function my_options_create_page() {
 	$options_page->add_field(
 		array(
 			 'name'    => 'contact_data',
-			 'label'   => __( 'Contact info', 'my_options' ),
+			 'label'   => __( 'Contact info', 'textdomain' ),
 			 'type'    => 'textarea',
 			 'section' => 'footer'
 		)
@@ -145,11 +143,15 @@ function my_options_create_page() {
 	$options_page->add_field(
 		array(
 			'name'    => 'copyright_text',
-			'label'   => __( 'Copyright text', 'my_options' ),
+			'label'   => __( 'Copyright text', 'textdomain' ),
 			'type'    => 'text',
 			'section' => 'footer'
 		)
 	);
+
+	// Set button text to false to hide the submit button.
+	// If declared `null` it defaults to 'Save changes'
+	$options_page->button_text = __( 'Save changes', 'textdomain' );
 
 	// Render the page - this is mandatory
 	$options_page->init();
