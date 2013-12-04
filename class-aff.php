@@ -210,9 +210,11 @@ class Aff {
 	}
 
 	function display_select($field_name, $field_value, $extra = array()) {
+		if ( !isset( $extra['options'] ) )
+			return;
 		?>
 		<select name="<?php echo $field_name; ?>">
-			<?php foreach($extra['select_options'] as $value => $title): ?>
+			<?php foreach($extra['options'] as $value => $title): ?>
 				<option value="<?php echo $value; ?>" <?php selected($field_value, $value); ?>><?php echo $title; ?></option>
 			<?php endforeach; ?>
 		</select>
@@ -220,10 +222,10 @@ class Aff {
 	}
 
 	function display_radio($field_name, $field_value, $extra = array() ) {
-		if( !isset( $extra['radio_options'] ) )
+		if ( !isset( $extra['options'] ) )
 			return;
 
-		foreach( $extra['radio_options'] as $value => $title ): ?>
+		foreach( $extra['options'] as $value => $title ): ?>
 			<label><input type="radio" name="<?php  echo $field_name; ?>" value="<?php echo $value;?>" <?php checked( $field_value, $value );?>/>
 				<?php echo $title; ?>
 			</label></br>
