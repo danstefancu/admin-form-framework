@@ -1,9 +1,7 @@
 <?php
 /*
  * Plugin name: My Options
- *
- * This simple plugin is a demonstration of all the available settings options available to AFF.
- * You can use it to learn using the plugin, or simply start modifying it to fit your needs.
+ * Description: This simple plugin is a demonstration of all the available settings options available to AFF. You can use it to learn using the plugin, or simply start modifying it to fit your needs.
  *
  * Note: Make sure you move it one level up. WordPress does not discover nested modules.
 */
@@ -61,71 +59,78 @@ function my_options_create_page() {
 	// Default: ''
 	$options_page->section_title = '';
 
-	// If you need more sections besides the default "general", add them like this
-	$options_page->add_section(
-		array(
-			'name'  => 'header',
-			'title' => __( 'Header', 'textdomain' )
-		)
-	);
-
-	// Select field
-	$options_page->add_field(
-		array(
-			'name'           => 'color_palette',
-			'label'          => __( 'Color palette', 'textdomain' ),
-			'type'           => 'select',
-			'description'    => '', // optional
-			'options' => array(
-				'#AA0000'    => __( 'Red', 'textdomain' ),
-				'#00AA00'    => __( 'Green', 'textdomain' ),
-				'#0000AA'    => __( 'Blue', 'textdomain' ),
-			),
-			'section' => 'header',
-		)
-	);
-
-	// Radio field
-	$options_page->add_field(
-		array(
-			'name'           => 'color2_palette',
-			'label'          => __( 'Secondary color palette', 'textdomain' ),
-			'type'           => 'radio',
-			'options' => array(
-				'#AA0000'    => __( 'Red', 'textdomain' ),
-				'#00AA00'    => __( 'Green', 'textdomain' ),
-				'#0000AA'    => __( 'Blue', 'textdomain' ),
-			),
-			'section' => 'header',
-		)
-	);
-
-	// Checkbox field
-	$options_page->add_field(
-		array(
-			'name'        => 'sticky_header',
-			'label'       => __( 'Sticky header', 'textdomain' ),
-			'type'        => 'checkbox',
-			'description' => __( 'Checking this will make the header sticky on desktop devices. Mobile devices have a sticky header by default.', 'textdomain' ),
-			'section'     => 'header',
-		)
-	);
-
-
-	$options_page->add_section(
-		array(
-			'name'  => 'footer',
-			'title' => __( 'Footer', 'textdomain' )
-		)
-	);
-
 	// Image field.
 	$options_page->add_field(
 		array(
 			 'name'    => 'logo',
 			 'label'   => __( 'Logo', 'textdomain' ),
 			 'type'    => 'image',
-			 'section' => 'footer'
+			 'section' => 'general', // optional for default section
+			 'description'    => '', // optional
+		)
+	);
+
+	// Text field
+	$options_page->add_field(
+		array(
+			 'name'   => 'description',
+			 'label'  => __( 'Short description', 'textdomain' ),
+			 'type'   => 'text',
+		)
+	);
+
+	// Checkbox field
+	$options_page->add_field(
+		array(
+			 'name'        => 'sticky_header',
+			 'label'       => __( 'Sticky header', 'textdomain' ),
+			 'type'        => 'checkbox',
+		)
+	);
+
+	// If you need more sections besides the default "general", add them like this
+	$options_page->add_section(
+		array(
+			 'name'  => 'color',
+			 'title' => __( 'Colors', 'textdomain' )
+		)
+	);
+
+	// Select field
+	$options_page->add_field(
+		array(
+			 'name'           => 'color_palette',
+			 'label'          => __( 'Color palette', 'textdomain' ),
+			 'type'           => 'select',
+
+			 'options' => array(
+				 '#AA0000'    => __( 'Red', 'textdomain' ),
+				 '#00AA00'    => __( 'Green', 'textdomain' ),
+				 '#0000AA'    => __( 'Blue', 'textdomain' ),
+			 ),
+			 'section' => 'color',
+		)
+	);
+
+	// Radio field
+	$options_page->add_field(
+		array(
+			 'name'           => 'color2_palette',
+			 'label'          => __( 'Secondary color palette', 'textdomain' ),
+			 'type'           => 'radio',
+			 'options' => array(
+				 '#AA0000'    => __( 'Red', 'textdomain' ),
+				 '#00AA00'    => __( 'Green', 'textdomain' ),
+				 '#0000AA'    => __( 'Blue', 'textdomain' ),
+			 ),
+			 'section' => 'color',
+		)
+	);
+
+	$options_page->add_section(
+		array(
+			 'name'  => 'meta',
+			 'title' => __( 'Meta informations', 'textdomain' )
 		)
 	);
 
@@ -135,23 +140,24 @@ function my_options_create_page() {
 			 'name'    => 'contact_data',
 			 'label'   => __( 'Contact info', 'textdomain' ),
 			 'type'    => 'textarea',
-			 'section' => 'footer'
+			 'description' => __( 'You can enter your physical and internet adress.', 'textdomain' ),
+			 'section' => 'meta'
 		)
 	);
 
 	// Text field
 	$options_page->add_field(
 		array(
-			'name'    => 'copyright_text',
-			'label'   => __( 'Copyright text', 'textdomain' ),
-			'type'    => 'text',
-			'section' => 'footer'
+			 'name'    => 'copyright_text',
+			 'label'   => __( 'Copyright text', 'textdomain' ),
+			 'type'    => 'text',
+			 'section' => 'meta'
 		)
 	);
 
 	// Set button text to false to hide the submit button.
 	// If declared `null` it defaults to 'Save changes'
-	$options_page->button_text = __( 'Save changes', 'textdomain' );
+	$options_page->button_text = __( 'Save theme options', 'textdomain' );
 
 	// Render the page - this is mandatory
 	$options_page->init();
