@@ -30,6 +30,9 @@ class Aff {
 	var $sections = array();
 	var $saved_options;
 
+	/**
+	 * Only method called from outside.
+	 */
 	public function init() {
 
 		$this->saved_options = get_option( $this->options_name );
@@ -106,6 +109,11 @@ class Aff {
 		}
 	}
 
+	/**
+	 * Handle enqueue for current option page.
+	 *
+	 * @param string $hookname
+	 */
 	function admin_scripts( $hookname ) {
 		if ( $this->hook_suffix == $hookname ) {
 			wp_enqueue_script( 'jquery' );
@@ -113,9 +121,9 @@ class Aff {
 			wp_enqueue_media();
 
 			wp_enqueue_script(
-				'dp-options',                  // name/id
-				$this->url( 'dp-options.js' ), // file
-				array( 'jquery' )              // dependencies
+				'aff-general',             // name/id
+				$this->url( 'aff.js' ),    // file
+				array( 'jquery' )          // dependencies
 			);
 		}
 	}
@@ -137,10 +145,10 @@ class Aff {
 	 *
 	 * @param array $args
 	 *
-	 * @var string $args ['name'] - coffee_check
-	 * @var string $args ['label'] - Want a coffee?
-	 * @var string $args ['type'] - checkbox
-	 * @var string $args ['description'] - If the user want coffee or not
+	 * @var string $args ['name'] coffee_check
+	 * @var string $args ['label'] Want a coffee?
+	 * @var string $args ['type'] checkbox
+	 * @var string $args ['description'] If the user want coffee or not
 	 *
 	 */
 	public function add_field( $args = array() ) {
@@ -188,6 +196,9 @@ class Aff {
 		}
 	}
 
+	/**
+	 * @param string $text
+	 */
 	function display_description( $text = '' ) {
 		if ( $text ) {
 			?>
@@ -196,24 +207,44 @@ class Aff {
 		}
 	}
 
+	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
 	function display_textarea( $field_name, $field_value, $extra = array() ) {
 		?>
 		<textarea class="large-text" name="<?php echo $field_name; ?>"><?php echo esc_textarea( $field_value ); ?></textarea>
 	<?php
 	}
 
+	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
 	function display_checkbox( $field_name, $field_value, $extra = array() ) {
 		?>
 		<input type="checkbox" name="<?php echo $field_name; ?>" value="1" <?php echo checked( 1, $field_value ); ?> />
 	<?php
 	}
 
+	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
 	function display_text( $field_name, $field_value, $extra = array() ) {
 		?>
 		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
 	<?php
 	}
 
+	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
 	function display_select( $field_name, $field_value, $extra = array() ) {
 		if ( !isset( $extra['options'] ) ) {
 			return;
@@ -227,6 +258,11 @@ class Aff {
 	<?php
 	}
 
+	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
 	function display_radio( $field_name, $field_value, $extra = array() ) {
 		if ( !isset( $extra['options'] ) )
 			return;
@@ -239,6 +275,11 @@ class Aff {
 		}
 	}
 
+	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
 	function display_image( $field_name, $field_value, $extra = array() ) {
 		$button_name = $field_name . '_button';
 		$type = 'image';
@@ -298,6 +339,13 @@ class Aff {
 	<?php
 	}
 
+	/**
+	 * Generate dynamic URL for a file to be included.
+	 *
+	 * @param string $file
+	 *
+	 * @return bool|string
+	 */
 	function url( $file ) {
 		$dir_path = dirname( __FILE__ );
 

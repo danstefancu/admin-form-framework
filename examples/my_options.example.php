@@ -58,11 +58,11 @@ function my_options_create_page() {
 	// Default: options-general.php (Settings)
 	$options_page->parent_slug = 'themes.php';
 
-	// TODO: Why would I change this?
+	// Can be changed to 'network_menu' - to add a page in the network admin menu
 	$options_page->menu_hook = 'admin_menu';
 
 	// If you need more sections besides the defaul "general", add them like this
-	$options_page->add_extra_section(
+	$options_page->add_section(
 		array(
 			'name'  => 'header',
 			'title' => __( 'Header', 'my_options' )
@@ -113,7 +113,7 @@ function my_options_create_page() {
 	);
 
 
-	$options_page->add_extra_section(
+	$options_page->add_section(
 		array(
 			'name'  => 'footer',
 			'title' => __( 'Footer', 'my_options' )
