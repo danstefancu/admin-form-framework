@@ -13,6 +13,7 @@ Author URI: http://stefancu.ro/
  * Small framework for adding options pages
  */
 class Aff {
+
 	var $title = 'Options Page';
 	var $menu_title = 'AFF Options';
 	var $page_slug = 'options_page';
@@ -33,11 +34,11 @@ class Aff {
 
 		$this->saved_options = get_option( $this->options_name );
 
-		add_action( $this->menu_hook , array($this, 'add_page'), 11 );
+		add_action( $this->menu_hook, array( $this, 'add_page' ), 11 );
 
-		add_action( 'admin_init', array($this, 'sections_init'), 11 );
-		add_action( 'admin_init', array($this, 'options_init'), 12 );
-		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts' ) );
+		add_action( 'admin_init', array( $this, 'sections_init' ), 11 );
+		add_action( 'admin_init', array( $this, 'options_init' ), 12 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 	}
 
 	/**
@@ -50,7 +51,7 @@ class Aff {
 			$this->menu_title,			// menu title. for menu label
 			$this->capability,			// capability
 			$this->page_slug,			// slug. needed for sections, unique identifier - options.php?page=$page_slug
-			array($this, 'render_page') 				// page callback. renders the page itself
+			array( $this, 'render_page' ) 				// page callback. renders the page itself
 		);
 	}
 
@@ -65,8 +66,9 @@ class Aff {
 			$this->page_slug	   // page slug
 		);
 
-		foreach ($this->sections as $section) {
-			$section['callback'] = (isset( $section['callback'] ) && !empty( $section['callback'] )) ? $section['callback'] : '__return_false';
+		foreach ( $this->sections as $section ) {
+			$section['callback'] =
+				( isset( $section['callback'] ) && !empty( $section['callback'] ) ) ? $section['callback'] : '__return_false';
 
 			add_settings_section(
 				$section['name'],		// id
@@ -88,13 +90,14 @@ class Aff {
 
 		);
 
-		foreach ($this->fields as $field) {
-			if ($field) {
-				$section = isset($field['section']) && $this->section_exists($field['section']) ? $field['section'] : 'general';
+		foreach ( $this->fields as $field ) {
+			if ( $field ) {
+				$section =
+					isset( $field['section'] ) && $this->section_exists( $field['section'] ) ? $field['section'] : 'general';
 				add_settings_field(
 					$field['name'],						// field id (internal)
 					$field['label'],					// field label
-					array($this, 'display_field'),		// callback function
+					array( $this, 'display_field' ),	// callback function
 					$this->page_slug,					// page to add to
 					$section,							// section to add to
 					$field 								// extra args
@@ -104,15 +107,15 @@ class Aff {
 	}
 
 	function admin_scripts( $hookname ) {
-		if( $this->hook_suffix == $hookname ) {
+		if ( $this->hook_suffix == $hookname ) {
 			wp_enqueue_script( 'jquery' );
 
 			wp_enqueue_media();
 
 			wp_enqueue_script(
-				'dp-options',      // name/id
-				$this->url('dp-options.js'), // file
-				array( 'jquery' )             // dependencies
+				'dp-options',                  // name/id
+				$this->url( 'dp-options.js' ), // file
+				array( 'jquery' )              // dependencies
 			);
 		}
 	}
@@ -121,41 +124,44 @@ class Aff {
 	 * Add extra section for this option page.
 	 *
 	 * @param array $options
-	 * @var string $options['name']
-	 * @var string $options['title']
-	 * @var string $options['callback']
+	 *
+	 * @var string $options ['name']
+	 * @var string $options ['title']
+	 * @var string $options ['callback']
 	 */
-	function add_section( $options ) {
+	function add_section( $options = array() ) {
 		$this->sections[] = $options;
 	}
 
 	/**
 	 *
-	 * name - coffee_check
-	 * label - Want a coffee?
-	 * type - checkbox
-	 * description - If the user want coffee or not
-	 *
 	 * @param array $args
+	 *
+	 * @var string $args ['name'] - coffee_check
+	 * @var string $args ['label'] - Want a coffee?
+	 * @var string $args ['type'] - checkbox
+	 * @var string $args ['description'] - If the user want coffee or not
+	 *
 	 */
 	public function add_field( $args = array() ) {
 		$this->fields[] = $args;
 	}
 
 
-
 	/**
 	 * Check if the section exists on current options page.
+	 *
 	 * @param $section
 	 *
 	 * @return bool
 	 */
-	function section_exists($section) {
+	function section_exists( $section ) {
 		global $wp_settings_sections;
 
-		foreach ($wp_settings_sections[$this->page_slug] as $section_name => $args ) {
-			if ($section === $section_name)
+		foreach ( $wp_settings_sections[$this->page_slug] as $section_name => $args ) {
+			if ( $section === $section_name ) {
 				return true;
+			}
 		}
 
 		return false;
@@ -165,79 +171,79 @@ class Aff {
 	 * Callback for register_settings_field().
 	 *
 	 * @param array $field options passed by register_settings_field()
-	 *
-	 * Todo: See what?
-	 * @see inl_course_options_init(options_init
 	 */
 	function display_field( $field ) {
-		$current_option_name = isset($field['name']) ? $field['name'] : '';
+		$current_option_name = isset( $field['name'] ) ? $field['name'] : '';
 
-		$field_callback = isset($field['type']) ? 'display_' . $field['type'] : 'display_text';
+		$field_callback = isset( $field['type'] ) ? 'display_' . $field['type'] : 'display_text';
 
 		$field_name = "{$this->options_name}[{$current_option_name}]";
-		$field_value = isset($this->saved_options[$current_option_name]) ? $this->saved_options[$current_option_name] : '';
+		$field_value =
+			isset( $this->saved_options[$current_option_name] ) ? $this->saved_options[$current_option_name] : '';
 		$extra = $field;
 
-		$this->$field_callback($field_name, $field_value, $extra);
+		$this->$field_callback( $field_name, $field_value, $extra );
 		if ( isset( $field['description'] ) ) {
-			$this->display_description($field['description']);
+			$this->display_description( $field['description'] );
 		}
 	}
 
-	function display_description($text = '') {
-		if ($text) { ?>
+	function display_description( $text = '' ) {
+		if ( $text ) {
+			?>
 			<p class="description"><?php echo $text; ?></p>
 		<?php
 		}
 	}
 
-	function display_textarea($field_name, $field_value, $extra = array()) {
+	function display_textarea( $field_name, $field_value, $extra = array() ) {
 		?>
 		<textarea class="large-text" name="<?php echo $field_name; ?>"><?php echo esc_textarea( $field_value ); ?></textarea>
 	<?php
 	}
 
-	function display_checkbox($field_name, $field_value, $extra = array()) {
+	function display_checkbox( $field_name, $field_value, $extra = array() ) {
 		?>
 		<input type="checkbox" name="<?php echo $field_name; ?>" value="1" <?php echo checked( 1, $field_value ); ?> />
 	<?php
 	}
 
-	function display_text($field_name, $field_value, $extra = array()) {
+	function display_text( $field_name, $field_value, $extra = array() ) {
 		?>
-		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>" />
+		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
 	<?php
 	}
 
-	function display_select($field_name, $field_value, $extra = array()) {
-		if ( !isset( $extra['options'] ) )
+	function display_select( $field_name, $field_value, $extra = array() ) {
+		if ( !isset( $extra['options'] ) ) {
 			return;
+		}
 		?>
 		<select name="<?php echo $field_name; ?>">
-			<?php foreach($extra['options'] as $value => $title): ?>
-				<option value="<?php echo $value; ?>" <?php selected($field_value, $value); ?>><?php echo $title; ?></option>
+			<?php foreach ( $extra['options'] as $value => $title ): ?>
+				<option value="<?php echo $value; ?>" <?php selected( $field_value, $value ); ?>><?php echo $title; ?></option>
 			<?php endforeach; ?>
 		</select>
 	<?php
 	}
 
-	function display_radio($field_name, $field_value, $extra = array() ) {
+	function display_radio( $field_name, $field_value, $extra = array() ) {
 		if ( !isset( $extra['options'] ) )
 			return;
 
-		foreach( $extra['options'] as $value => $title ): ?>
-			<label><input type="radio" name="<?php  echo $field_name; ?>" value="<?php echo $value;?>" <?php checked( $field_value, $value );?>/>
+		foreach ( $extra['options'] as $value => $title ) { ?>
+			<label><input type="radio" name="<?php echo $field_name; ?>" value="<?php echo $value; ?>" <?php checked( $field_value, $value ); ?>/>
 				<?php echo $title; ?>
-			</label></br>
+			</label><br/>
 		<?php
-		endforeach;
+		}
 	}
 
 	function display_image( $field_name, $field_value, $extra = array() ) {
 		$button_name = $field_name . '_button';
 		$type = 'image';
 		$class = isset( $extra['class'] ) ? $extra['class'] : 'options-page-image';
-		if ($field_value) {
+		if ( $field_value ) {
 			$attachment = get_post( $field_value );
 			$filename = basename( $attachment->guid );
 			$icon_src = wp_get_attachment_image_src( $attachment->ID, 'medium' );
@@ -255,17 +261,17 @@ class Aff {
 		?>
 
 		<div class="<?php echo $class; ?> dp-field" data-type="<?php echo $type; ?>">
-			<input type="hidden" class="file-value" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" value="<?php echo esc_attr($field_value); ?>" />
+			<input type="hidden" class="file-value" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
 
 			<div class="file-missing <?php echo $uploader_div; ?>">
-				<span><?php _e('No file selected.', 'dp'); ?></span>
-				<button class="button file-add" name="<?php echo $button_name; ?>" id="<?php echo $button_name; ?>"><?php _e('Add file', 'dp') ?></button>
+				<span><?php _e( 'No file selected.', 'dp' ); ?></span>
+				<button class="button file-add" name="<?php echo $button_name; ?>" id="<?php echo $button_name; ?>"><?php _e( 'Add file', 'dp' ) ?></button>
 			</div>
 			<div class="file-exists clearfix <?php echo $display_div; ?>">
-				<img class="file-icon" src="<?php echo $icon_src; ?>" />
+				<img class="file-icon" src="<?php echo $icon_src; ?>"/>
 				<br/>
 				<span class="file-name hidden"><?php echo $filename; ?></span>
-				<a class="file-remove button" href="#"><?php _e('Remove', 'dp'); ?></a>
+				<a class="file-remove button" href="#"><?php _e( 'Remove', 'dp' ); ?></a>
 			</div>
 		</div>
 	<?php
@@ -293,15 +299,15 @@ class Aff {
 	}
 
 	function url( $file ) {
-		$dir_path = dirname(__FILE__);
+		$dir_path = dirname( __FILE__ );
 
-		if( !file_exists( trailingslashit( $dir_path) . $file ) )
+		if ( !file_exists( trailingslashit( $dir_path ) . $file ) )
 			return false;
 
 		$home_path = untrailingslashit( get_home_path() );
 
-		$path_from_root = str_replace($home_path, '', $dir_path );
-		$path_from_root = str_replace( '\\', '/', $path_from_root);
+		$path_from_root = str_replace( $home_path, '', $dir_path );
+		$path_from_root = str_replace( '\\', '/', $path_from_root );
 
 		return home_url( trailingslashit( $path_from_root ) . $file );
 	}
