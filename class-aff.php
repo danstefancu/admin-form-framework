@@ -2,8 +2,8 @@
 /*
 Plugin name: Admin Form Framework
 Plugin URI: http://dreamproduction.com/wordpress/aff
-Description: Small framework for building Admin pages with forms.
-Version: 0.3
+Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
+Version: 0.4
 Author: Dan Stefancu
 Author URI: http://stefancu.ro/
 */
@@ -354,6 +354,7 @@ class Aff {
 			return false;
 
 		$home_path = untrailingslashit( get_home_path() );
+		$home_path = str_replace( '\\', '/', $home_path );
 
 		$path_from_root = str_replace( $home_path, '', $dir_path );
 		$path_from_root = str_replace( '\\', '/', $path_from_root );
