@@ -26,32 +26,18 @@ class Aff {
 	private $hook_suffix;
 
 	var $fields = array();
-	var $extra_sections = array();
+	var $sections = array();
 	var $saved_options;
 
 	public function init() {
 
 		$this->saved_options = get_option( $this->options_name );
 
-		if ($this->extra_sections)
-			add_action( 'admin_init', array($this, 'extra_sections_init') );
-
 		add_action( $this->menu_hook , array($this, 'add_page'), 11 );
-		add_action( 'admin_init', array($this, 'options_init'), 11 );
-		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts' ) );
-	}
 
-	/**
-	 *
-	 * name - coffee_check
-	 * label - Want a coffee?
-	 * type - checkbox
-	 * description - If the user want coffee or not
-	 *
-	 * @param array $args
-	 */
-	public function add_field( $args = array() ) {
-		$this->fields[] = $args;
+		add_action( 'admin_init', array($this, 'sections_init'), 11 );
+		add_action( 'admin_init', array($this, 'options_init'), 12 );
+		add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts' ) );
 	}
 
 	/**
@@ -68,30 +54,25 @@ class Aff {
 		);
 	}
 
-	function url( $file ) {
-		$dir_path = dirname(__FILE__);
+	/**
+	 * Register extra sections on this option page.
+	 */
+	function sections_init() {
+		add_settings_section(
+			'general',		       // id
+			$this->section_title,  // title
+			'__return_false',	   // callback
+			$this->page_slug	   // page slug
+		);
 
-		if( !file_exists( trailingslashit( $dir_path) . $file ) )
-			return false;
+		foreach ($this->sections as $section) {
+			$section['callback'] = (isset( $section['callback'] ) && !empty( $section['callback'] )) ? $section['callback'] : '__return_false';
 
-		$home_path = untrailingslashit( get_home_path() );
-
-		$path_from_root = str_replace($home_path, '', $dir_path );
-		$path_from_root = str_replace( '\\', '/', $path_from_root);
-
-		return home_url( trailingslashit( $path_from_root ) . $file );
-	}
-
-	function admin_scripts( $hookname ) {
-		if( $this->hook_suffix == $hookname ) {
-			wp_enqueue_script( 'jquery' );
-
-			wp_enqueue_media();
-
-			wp_enqueue_script(
-				'dp-options',      // name/id
-				$this->url('dp-options.js'), // file
-				array( 'jquery' )             // dependencies
+			add_settings_section(
+				$section['name'],		// id
+				$section['title'],		// title
+				$section['callback'],	// callback
+				$this->page_slug		// page slug
 			);
 		}
 	}
@@ -105,13 +86,6 @@ class Aff {
 			$this->options_name,	// option group. used in render_page() -> settings_fields()
 			$this->options_name		// option name. database option name
 
-		);
-
-		add_settings_section(
-			'general',				// id
-			$this->section_title,	// title
-			'__return_false',		// callback
-			$this->page_slug		// page slug
 		);
 
 		foreach ($this->fields as $field) {
@@ -129,6 +103,20 @@ class Aff {
 		}
 	}
 
+	function admin_scripts( $hookname ) {
+		if( $this->hook_suffix == $hookname ) {
+			wp_enqueue_script( 'jquery' );
+
+			wp_enqueue_media();
+
+			wp_enqueue_script(
+				'dp-options',      // name/id
+				$this->url('dp-options.js'), // file
+				array( 'jquery' )             // dependencies
+			);
+		}
+	}
+
 	/**
 	 * Add extra section for this option page.
 	 *
@@ -137,26 +125,24 @@ class Aff {
 	 * @var string $options['title']
 	 * @var string $options['callback']
 	 */
-	function add_extra_section( $options ) {
-		$this->extra_sections[] = $options;
-
+	function add_section( $options ) {
+		$this->sections[] = $options;
 	}
 
 	/**
-	 * Register extra sections on this option page.
+	 *
+	 * name - coffee_check
+	 * label - Want a coffee?
+	 * type - checkbox
+	 * description - If the user want coffee or not
+	 *
+	 * @param array $args
 	 */
-	function extra_sections_init() {
-		foreach ($this->extra_sections as $section) {
-			$section['callback'] = (isset( $section['callback'] ) && !empty( $section['callback'] )) ? $section['callback'] : '__return_false';
-
-			add_settings_section(
-				$section['name'],		// id
-				$section['title'],		// title
-				$section['callback'],	// callback
-				$this->page_slug		// page slug
-			);
-		}
+	public function add_field( $args = array() ) {
+		$this->fields[] = $args;
 	}
+
+
 
 	/**
 	 * Check if the section exists on current options page.
@@ -302,5 +288,19 @@ class Aff {
 			</form>
 		</div><!-- .wrap -->
 	<?php
+	}
+
+	function url( $file ) {
+		$dir_path = dirname(__FILE__);
+
+		if( !file_exists( trailingslashit( $dir_path) . $file ) )
+			return false;
+
+		$home_path = untrailingslashit( get_home_path() );
+
+		$path_from_root = str_replace($home_path, '', $dir_path );
+		$path_from_root = str_replace( '\\', '/', $path_from_root);
+
+		return home_url( trailingslashit( $path_from_root ) . $file );
 	}
 }
