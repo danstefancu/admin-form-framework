@@ -1,12 +1,14 @@
 <?php
-/*
-Plugin name: Admin Form Framework
-Plugin URI: http://dreamproduction.com/wordpress/aff
-Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
-Version: 0.4
-Author: Dan Stefancu
-Author URI: http://stefancu.ro/
-*/
+/**
+ * Plugin name: Admin Form Framework
+ * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
+ * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
+ * Version: 1.0
+ * Author: Dan Stefancu
+ * Author URI: http://stefancu.ro/
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+ */
 
 
 /**
@@ -322,9 +324,10 @@ class Aff {
 	 * Display the options page
 	 */
 	function render_page() {
+		global $wp_version;
 		?>
 		<div class="wrap">
-			<?php screen_icon(); ?>
+			<?php if ( version_compare( $wp_version, '3.8', '<' ) ) { screen_icon(); } ?>
 
 			<h2><?php echo $this->title; ?></h2>
 

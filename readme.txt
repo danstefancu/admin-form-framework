@@ -3,7 +3,7 @@ Contributors: de-ce
 Tags: development, settings, options, custom, admin
 Requires at least: 3.5
 Tested up to: 3.8
-Stable tag: 0.4
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,5 +70,5 @@ If you require a lot of custom markup or advanced validation, this plugin may ge
 
 == Changelog ==
 
-= 0.4 =
+= 1.0 =
 * First public release.
