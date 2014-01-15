@@ -170,9 +170,9 @@ function my_options_create_page() {
  *
  * @return string
  */
-function my_options_get_copyright_text() {
+function get_my_options_copyright_text() {
 	$my_options = get_option( 'my_theme_options' );
-	$sticky_header = $my_options['sticky_header'];
+	$individual_option = $my_options['copyright_text'];
 
-	return $sticky_header;
+	return $individual_option;
 }
