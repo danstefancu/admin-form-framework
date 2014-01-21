@@ -3,7 +3,7 @@
  * Plugin name: Admin Form Framework
  * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
  * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Dan Stefancu
  * Author URI: http://stefancu.ro/
  * License: GPL-2.0+
@@ -37,7 +37,12 @@ class Aff {
 	 */
 	public function init() {
 
-		$this->saved_options = get_option( $this->options_name );
+		if( $this->menu_hook == "network_admin_menu" ) {
+			$this->saved_options = get_site_option( $this->options_name );
+			add_action('update_wpmu_options', array( $this, 'update_site_options') );
+		} else {
+			$this->saved_options = get_option( $this->options_name );		
+		}
 
 		add_action( $this->menu_hook, array( $this, 'add_page' ), 11 );
 
@@ -331,15 +336,42 @@ class Aff {
 
 			<h2><?php echo $this->title; ?></h2>
 
-			<form method="post" action="<?php echo admin_url( 'options.php' ); ?>">
+			<?php 
+
+			if( $this->menu_hook == "network_admin_menu" ) {
+				$action = network_admin_url( 'settings.php' );
+			} else {
+				$action = admin_url( 'options.php' ); 
+			}
+			?>
+
+			<form method="post" action="<?php echo $action; ?>">
 				<?php
 				settings_fields( $this->options_name );
+				wp_nonce_field( 'siteoptions' );
 				do_settings_sections( $this->page_slug );
 				if ( $this->button_text !== false ) submit_button( $this->button_text );
 				?>
 			</form>
 		</div><!-- .wrap -->
 	<?php
+	}
+
+	/**
+	 * Update site options in case the form is a network admin menu
+	 * @return void
+	 */
+	function update_site_options() {
+
+		if ( isset( $_POST[ $this->options_name ] ) ) {
+			$value = stripslashes_deep( $_POST[ $this->options_name ] );
+			update_site_option( $this->options_name, $value );
+
+			if( isset( $_POST['_wp_http_referer'] ) ) {
+				wp_redirect( add_query_arg( 'updated', 'true', $_POST['_wp_http_referer'] ) );
+				exit();
+			}
+		}
 	}
 
 	/**
