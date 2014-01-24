@@ -3,7 +3,7 @@
  * Plugin name: Admin Form Framework
  * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
  * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Dan Stefancu
  * Author URI: http://stefancu.ro/
  * License: GPL-2.0+
@@ -348,7 +348,9 @@ class Aff {
 			<form method="post" action="<?php echo $action; ?>">
 				<?php
 				settings_fields( $this->options_name );
-				wp_nonce_field( 'siteoptions' );
+				if ( $this->menu_hook == "network_admin_menu" ) {
+					wp_nonce_field( 'siteoptions' );
+				}
 				do_settings_sections( $this->page_slug );
 				if ( $this->button_text !== false ) submit_button( $this->button_text );
 				?>
