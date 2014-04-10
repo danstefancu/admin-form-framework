@@ -2,8 +2,8 @@
 Contributors: de-ce, dream-production
 Tags: development, settings, options, custom, admin
 Requires at least: 3.5
-Tested up to: 3.8
-Stable tag: 1.0.1
+Tested up to: 3.8.2
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,15 @@ The Settings API can be difficult to use by the novice developer. Writing the se
 If you require a lot of custom markup or advanced validation, this plugin may get in your way. However, you can easily extend the settings class with new option types that satisfy your particular needs.
 
 == Changelog ==
+
+= 1.1 =
+* Added WPML compatibility.
+
+= 1.0.3 =
+* Fixed Multisite forms.
+
+= 1.0.2 =
+* Added single / multisite compatibility.
 
 = 1.0.1 =
 * Fixed example and readme.
