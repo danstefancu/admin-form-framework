@@ -3,7 +3,7 @@
  * Plugin name: Admin Form Framework
  * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
  * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
- * Version: 1.1
+ * Version: 1.1.1
  * Author: Dan Stefancu
  * Author URI: http://stefancu.ro/
  * License: GPL-2.0+
@@ -25,6 +25,7 @@ class Aff {
 	var $parent_slug = 'options-general.php';
 	var $menu_hook = 'admin_menu';
 	var $button_text = null;
+	var $multilingual_options = false;
 
 	private $hook_suffix;
 
@@ -37,7 +38,7 @@ class Aff {
 	 */
 	public function init() {
 
-		if ( class_exists( 'Sitepress' ) ) {
+		if ( class_exists( 'Sitepress' ) && $this->multilingual_options ) {
 			global $sitepress;
 
 			if ( $sitepress->get_default_language() != $sitepress->get_current_language() ) {
