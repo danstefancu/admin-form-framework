@@ -70,6 +70,12 @@ If you require a lot of custom markup or advanced validation, this plugin may ge
 
 == Changelog ==
 
+= 1.1.2 =
+* Allow saved options to be set externaly
+
+= 1.1.1 =
+* Multilingual options made optional
+
 = 1.1 =
 * Added WPML compatibility.
 
