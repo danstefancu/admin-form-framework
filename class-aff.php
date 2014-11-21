@@ -3,7 +3,7 @@
  * Plugin name: Admin Form Framework
  * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
  * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: Dan Stefancu
  * Author URI: http://stefancu.ro/
  * License: GPL-2.0+
@@ -422,5 +422,9 @@ class Aff {
 	 */
 	function is_posted() {
 		return ( isset( $_POST['option_page'] ) && $_POST['option_page'] == $this->options_name );
+	}
+
+	function posted_data() {
+		return ( $_POST[ $this->options_name ] );
 	}
 }
