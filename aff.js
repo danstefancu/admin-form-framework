@@ -203,6 +203,14 @@
 			icon_duplicator.init();
 		});
 
+		$('.file-remove').click( function(e) {
+			var parent = $(this).parents('td');
+			$('.file',parent).val('');
+			$('.has-file',parent).hide();
+			$('.add-file',parent).show();
+			e.preventDefault();
+		} );
+
 	});
 
 })(jQuery);

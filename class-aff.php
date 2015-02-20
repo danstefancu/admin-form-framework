@@ -3,7 +3,7 @@
  * Plugin name: Admin Form Framework
  * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
  * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
- * Version: 1.1.4
+ * Version: 1.2.0
  * Author: Dan Stefancu
  * Author URI: http://stefancu.ro/
  * License: GPL-2.0+
@@ -26,6 +26,12 @@ class Aff {
 	var $menu_hook = 'admin_menu';
 	var $button_text = null;
 	var $multilingual_options = false;
+
+	/*
+	 * Enable/Disable saving files into media
+	 * Set to false if files are one time use
+	 */
+	var $save_files = true;
 
 	private $hook_suffix;
 
@@ -57,6 +63,7 @@ class Aff {
 
 		add_action( $this->menu_hook, array( $this, 'add_page' ), 11 );
 
+		add_action( 'admin_init', array( $this, 'save_files' ), 10 );
 		add_action( 'admin_init', array( $this, 'sections_init' ), 11 );
 		add_action( 'admin_init', array( $this, 'options_init' ), 12 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
@@ -97,6 +104,44 @@ class Aff {
 				$section['callback'],	// callback
 				$this->page_slug		// page slug
 			);
+		}
+	}
+
+	/**
+	 * Handle file saving, adding attachment and storing id in options
+	 *
+	 * @see media_handle_upload()
+	 */
+	function save_files() {
+		if ( $this->is_posted() && $_FILES && $this->save_files ) {
+			$sorted = array();
+
+			/**
+			 * Reformat the structure of the $_FILES for media_handle_upload()
+			 * Required structure: array( 'field_name' => file_data_array )
+			 * WP Settings API puts field data as field_name => value
+			 * inside file data array with keys:
+			 * name, tmp_name, type, error, size
+			 */
+			foreach ( $_FILES[ $this->options_name ] as $file_data_key => $field_data_for_key ) {
+
+				foreach ( $field_data_for_key as $field_name => $file_data )
+					$sorted[$field_name][$file_data_key] = $file_data;
+
+			}
+			$_FILES = $sorted;
+
+			foreach( $this->fields as $field ) {
+				if ( $field['type'] != 'file' ) {
+					continue;
+				}
+				// handle upload as unattached media file
+				$attachment_id = media_handle_upload( $field['name'], 0 );
+				// store attachment id in options
+				if ( $attachment_id && ! is_wp_error( $attachment_id ) ) {
+					$_POST[ $this->options_name ][ $field['name'] ] = $attachment_id;
+				}
+			}
 		}
 	}
 
@@ -337,6 +382,48 @@ class Aff {
 	}
 
 	/**
+	 * @param string $field_name
+	 * @param string $field_value
+	 * @param array $extra
+	 */
+	function display_file( $field_name, $field_value, $extra = array() ) { ?>
+
+		<input class="file" type="hidden" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
+		<?php if ( $field_value ) {
+			$attachment = get_post( $field_value );
+			?>
+		<div class="has-file">
+			<p><?php printf( __( "Current file: %s.", 'dp' ), $attachment->post_title ); ?>
+				<?php edit_post_link( __( 'View file here', 'dp' ), '', '', $field_value ); ?>
+			</p>
+			<p>
+				<a class="file-remove button" href="#"><?php _e( 'Remove file', 'dp' ); ?></a>
+			</p>
+		</div>
+		<?php } ?>
+		<div class="add-file <?php if( $field_value ) echo "hidden"; ?>">
+			<input type="file" name="<?php echo $field_name; ?>" />
+		</div>
+	<?php
+	}
+
+	/**
+	 * Returns all used field types
+	 *
+	 * @return array
+	 */
+	function get_field_types() {
+		$field_types = array();
+
+		foreach( $this->fields as $field ) {
+			if( ! in_array( $field['type'], $field_types ) ) {
+				$field_types[] = $field['type'];
+			}
+		}
+
+		return $field_types;
+	}
+	/**
 	 * Display the options page
 	 */
 	function render_page() {
@@ -354,9 +441,15 @@ class Aff {
 			} else {
 				$action = admin_url( 'options.php' ); 
 			}
+
+			$encryption_type = '';
+			$field_types = $this->get_field_types();
+
+			if( in_array( 'file', $field_types ) )
+				$encryption_type = 'enctype="multipart/form-data"';
 			?>
 
-			<form method="post" action="<?php echo $action; ?>">
+			<form method="post" action="<?php echo $action; ?>" <?php echo $encryption_type; ?>>
 				<?php
 				settings_fields( $this->options_name );
 				if ( $this->menu_hook == "network_admin_menu" ) {
