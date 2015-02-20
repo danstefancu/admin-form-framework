@@ -70,6 +70,12 @@ If you require a lot of custom markup or advanced validation, this plugin may ge
 
 == Changelog ==
 
+= 1.2.1 =
+* Externalized form and form fields
+
+= 1.2.0 =
+* Added file field type
+
 = 1.1.2 =
 * Allow saved options to be set externaly
 

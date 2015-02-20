@@ -3,7 +3,7 @@
  * Plugin name: Admin Form Framework
  * Plugin URI: http://dreamproduction.com/wordpress/admin-form-framework
  * Description: Small framework for building Admin pages with forms. This plugin provides a wrapper for the WordPress Settings API that is a much easier, faster and extensible way of building your settings forms.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Dan Stefancu
  * Author URI: http://stefancu.ro/
  * License: GPL-2.0+
@@ -263,11 +263,7 @@ class Aff {
 	 * @param string $text
 	 */
 	function display_description( $text = '' ) {
-		if ( $text ) {
-			?>
-			<p class="description"><?php echo $text; ?></p>
-		<?php
-		}
+		include( 'views/description.php' );
 	}
 
 	/**
@@ -276,9 +272,7 @@ class Aff {
 	 * @param array $extra
 	 */
 	function display_textarea( $field_name, $field_value, $extra = array() ) {
-		?>
-		<textarea class="large-text" name="<?php echo $field_name; ?>"><?php echo esc_textarea( $field_value ); ?></textarea>
-	<?php
+		include( 'views/textarea.php' );
 	}
 
 	/**
@@ -287,9 +281,7 @@ class Aff {
 	 * @param array $extra
 	 */
 	function display_checkbox( $field_name, $field_value, $extra = array() ) {
-		?>
-		<input type="checkbox" name="<?php echo $field_name; ?>" value="1" <?php echo checked( 1, $field_value ); ?> />
-	<?php
+		include( 'views/checkbox.php' );
 	}
 
 	/**
@@ -298,9 +290,7 @@ class Aff {
 	 * @param array $extra
 	 */
 	function display_text( $field_name, $field_value, $extra = array() ) {
-		?>
-		<input type="text" class="regular-text" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
-	<?php
+		include ( 'views/text.php' );
 	}
 
 	/**
@@ -309,16 +299,10 @@ class Aff {
 	 * @param array $extra
 	 */
 	function display_select( $field_name, $field_value, $extra = array() ) {
-		if ( !isset( $extra['options'] ) ) {
+		if ( ! isset( $extra['options'] ) ) {
 			return;
 		}
-		?>
-		<select name="<?php echo $field_name; ?>">
-			<?php foreach ( $extra['options'] as $value => $title ): ?>
-				<option value="<?php echo $value; ?>" <?php selected( $field_value, $value ); ?>><?php echo $title; ?></option>
-			<?php endforeach; ?>
-		</select>
-	<?php
+		include( 'views/select.php' );
 	}
 
 	/**
@@ -330,12 +314,7 @@ class Aff {
 		if ( !isset( $extra['options'] ) )
 			return;
 
-		foreach ( $extra['options'] as $value => $title ) { ?>
-			<label><input type="radio" name="<?php echo $field_name; ?>" value="<?php echo $value; ?>" <?php checked( $field_value, $value ); ?>/>
-				<?php echo $title; ?>
-			</label><br/>
-		<?php
-		}
+		include( 'views/radio.php' );
 	}
 
 	/**
@@ -344,41 +323,7 @@ class Aff {
 	 * @param array $extra
 	 */
 	function display_image( $field_name, $field_value, $extra = array() ) {
-		$button_name = $field_name . '_button';
-		$type = 'image';
-		$class = isset( $extra['class'] ) ? $extra['class'] : 'options-page-image';
-		if ( $field_value ) {
-			$attachment = get_post( $field_value );
-			$filename = basename( $attachment->guid );
-			$icon_src = wp_get_attachment_image_src( $attachment->ID, 'medium' );
-			$icon_src = array_values( $icon_src );
-			$icon_src = array_shift( $icon_src );
-			$uploader_div = 'hidden';
-			$display_div = '';
-		} else {
-			$uploader_div = '';
-			$display_div = 'hidden';
-			$filename = '';
-			$icon_src = wp_mime_type_icon( $type );
-		}
-
-		?>
-
-		<div class="<?php echo $class; ?> dp-field" data-type="<?php echo $type; ?>">
-			<input type="hidden" class="file-value" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
-
-			<div class="file-missing <?php echo $uploader_div; ?>">
-				<span><?php _e( 'No file selected.', 'dp' ); ?></span>
-				<button class="button file-add" name="<?php echo $button_name; ?>" id="<?php echo $button_name; ?>"><?php _e( 'Add file', 'dp' ) ?></button>
-			</div>
-			<div class="file-exists clearfix <?php echo $display_div; ?>">
-				<img class="file-icon" src="<?php echo $icon_src; ?>"/>
-				<br/>
-				<span class="file-name hidden"><?php echo $filename; ?></span>
-				<a class="file-remove button" href="#"><?php _e( 'Remove', 'dp' ); ?></a>
-			</div>
-		</div>
-	<?php
+		include( 'views/image.php' );
 	}
 
 	/**
@@ -386,25 +331,8 @@ class Aff {
 	 * @param string $field_value
 	 * @param array $extra
 	 */
-	function display_file( $field_name, $field_value, $extra = array() ) { ?>
-
-		<input class="file" type="hidden" name="<?php echo $field_name; ?>" value="<?php echo esc_attr( $field_value ); ?>"/>
-		<?php if ( $field_value ) {
-			$attachment = get_post( $field_value );
-			?>
-		<div class="has-file">
-			<p><?php printf( __( "Current file: %s.", 'dp' ), $attachment->post_title ); ?>
-				<?php edit_post_link( __( 'View file here', 'dp' ), '', '', $field_value ); ?>
-			</p>
-			<p>
-				<a class="file-remove button" href="#"><?php _e( 'Remove file', 'dp' ); ?></a>
-			</p>
-		</div>
-		<?php } ?>
-		<div class="add-file <?php if( $field_value ) echo "hidden"; ?>">
-			<input type="file" name="<?php echo $field_name; ?>" />
-		</div>
-	<?php
+	function display_file( $field_name, $field_value, $extra = array() ) {
+		include( 'views/file.php' );
 	}
 
 	/**
@@ -427,40 +355,7 @@ class Aff {
 	 * Display the options page
 	 */
 	function render_page() {
-		global $wp_version;
-		?>
-		<div class="wrap">
-			<?php if ( version_compare( $wp_version, '3.8', '<' ) ) { screen_icon(); } ?>
-
-			<h2><?php echo $this->title; ?></h2>
-
-			<?php 
-
-			if( $this->menu_hook == "network_admin_menu" ) {
-				$action = network_admin_url( 'settings.php' );
-			} else {
-				$action = admin_url( 'options.php' ); 
-			}
-
-			$encryption_type = '';
-			$field_types = $this->get_field_types();
-
-			if( in_array( 'file', $field_types ) )
-				$encryption_type = 'enctype="multipart/form-data"';
-			?>
-
-			<form method="post" action="<?php echo $action; ?>" <?php echo $encryption_type; ?>>
-				<?php
-				settings_fields( $this->options_name );
-				if ( $this->menu_hook == "network_admin_menu" ) {
-					wp_nonce_field( 'siteoptions' );
-				}
-				do_settings_sections( $this->page_slug );
-				if ( $this->button_text !== false ) submit_button( $this->button_text );
-				?>
-			</form>
-		</div><!-- .wrap -->
-	<?php
+		include( 'views/options-page.php' );
 	}
 
 	/**
